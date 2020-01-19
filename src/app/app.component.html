@@ -1,3 +1,30 @@
 <main>
   <h1>@mrelectronick/ng-rangeslider</h1>
+  <hr>
+  <br>
+  <label for="val">Enter value:</label>
+  &nbsp;
+  <input id="val" type="number" size="3" [value]="val" (change)="changeVal($event)" style="width: 75px">
+  <br>
+  <br>
+
+  <ng-rangeslider [value]="val"
+                  [step]="10"
+                  (changed)="changeRange($event)"></ng-rangeslider>
+
+  <hr>
+  <br>
+
+  <label for="val2">Enter value:</label>
+  &nbsp;
+  <input id="val2" type="number" size="3" [value]="val2" (change)="val2 = $event.target.value" style="width: 75px">
+  <br>
+  <br>
+
+  <ng-rangeslider
+    [value]="val2"
+    [min]="100"
+    [max]="200"
+    (changed)="val2 = $event"></ng-rangeslider>
+
 </main>

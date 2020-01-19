@@ -17,7 +17,15 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ng-rangeslider": [
+        "dist/ng-rangeslider"
+      ],
+      "ng-rangeslider/*": [
+        "dist/ng-rangeslider/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

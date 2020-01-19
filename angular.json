@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ng-rangeslider": {
+    "ng-rangeslider-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/ng-rangeslider",
+            "outputPath": "docs",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -67,7 +67,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ng-rangeslider:build"
+            "browserTarget": "ng-rangeslider-app:build"
           },
           "configurations": {
             "production": {
@@ -124,6 +124,41 @@
           }
         }
       }
+    },
+    "ng-rangeslider": {
+      "projectType": "library",
+      "root": "projects/ng-rangeslider",
+      "sourceRoot": "projects/ng-rangeslider/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ng-rangeslider/tsconfig.lib.json",
+            "project": "projects/ng-rangeslider/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ng-rangeslider/src/test.ts",
+            "tsConfig": "projects/ng-rangeslider/tsconfig.spec.json",
+            "karmaConfig": "projects/ng-rangeslider/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ng-rangeslider/tsconfig.lib.json",
+              "projects/ng-rangeslider/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }},
-  "defaultProject": "ng-rangeslider"
+  "defaultProject": "ng-rangeslider-app"
 }
