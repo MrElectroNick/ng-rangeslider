@@ -14,7 +14,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewCh
   selector: 'ng-rangeslider',
   template: `
     <div #range
-         [class]="rangeClass" id="js-rangeslider-0">
+         [class]="rangeClass" id="{{identifier}}">
       <div #fill [class]="fillClass"></div>
       <div #handle [class]="handleClass"></div>
     </div>
@@ -92,9 +92,10 @@ import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewCh
 export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
 
   private static pluginIdentifier = 0;
-
-  private identifier = 'ng-rangeslider-' + (NgRangesliderComponent.pluginIdentifier++);
+  private handleDown;
   private xvalue = 0;
+
+  identifier = 'ng-rangeslider-' + (NgRangesliderComponent.pluginIdentifier++);
 
   handleWidth = 0;
   rangeWidth = 0;
@@ -112,12 +113,12 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
   @Input() disabledClass = 'rangeslider--disabled';
   @Input() fillClass = 'rangeslider__fill';
   @Input() handleClass = 'rangeslider__handle';
+  @Input() disabled = false;
   @Input() step = 1;
 
   @Input()
   set value(v: number) {
     this.xvalue = v;
-    console.log('s', v);
     const pos = this.getPositionFromValue(v);
     this.setPosition(pos, false);
   }
@@ -130,11 +131,57 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
   @Input() max = 100;
 
   constructor() {
-    document.addEventListener('pointerdown', this.handleDown.bind(this));
+    const self = this;
+
+    // tslint:disable-next-line:only-arrow-functions
+    const handleMove = function (e) {
+      e.preventDefault();
+      const posX = self.getRelativePosition(e);
+      self.setPosition(posX - self.grabX);
+    };
+
+    // tslint:disable-next-line:only-arrow-functions
+    const handleEnd = function (e) {
+      e.preventDefault();
+      document.removeEventListener('pointermove', handleMove, true);
+      document.removeEventListener('pointerup', handleEnd, true);
+    };
+
+    // tslint:disable-next-line:only-arrow-functions
+    const handleDown = function (e) {
+      console.log('down');
+      const local = self.isLocalClick(e.target);
+      if (self.disabled || !local) {
+        return;
+      }
+      if (local) {
+        e.preventDefault();
+      }
+      document.addEventListener('pointermove', handleMove, true);
+      document.addEventListener('pointerup', handleEnd, true);
+
+      // If we click on the handle don't set the new position
+      if ((' ' + e.target.className + ' ').replace(/[\n\t]/g, ' ').indexOf(self.handleClass) > -1) {
+        return;
+      }
+
+      const posX = self.getRelativePosition(e);
+      const rangeX = self.$range.nativeElement.getBoundingClientRect().left;
+      const handleX = self.getPositionFromNode(self.$handle.nativeElement) - rangeX;
+
+      self.setPosition(posX - self.grabX);
+
+      if (posX >= handleX && posX < handleX + self.handleWidth) {
+        self.grabX = posX - handleX;
+      }
+    };
+    document.removeEventListener('pointerdown', handleDown);
+    document.addEventListener('pointerdown', handleDown);
+
+    this.handleDown = handleDown;
   }
 
   ngAfterViewInit(): void {
-    console.log('i', this.xvalue);
     this.update();
   }
 
@@ -157,11 +204,11 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
     this.position = this.getPositionFromValue(this.value);
 
     // Consider disabled state
-    // if (this.$element[0].disabled) {
-    //   this.$range.addClass(this.options.disabledClass);
-    // } else {
-    //   this.$range.removeClass(this.options.disabledClass);
-    // }
+    if (this.disabled) {
+      this.$range.nativeElement.classList.add(this.disabledClass);
+    } else {
+      this.$range.nativeElement.classList.remove(this.disabledClass);
+    }
 
     this.setPosition(this.position, false);
   }
@@ -251,9 +298,9 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    console.log('setValue', value, this.value);
-
-    console.trace('setValue');
+    // console.log('setValue', value, this.value);
+    //
+    // console.trace('setValue');
 
     this.changed.emit(value);
 
@@ -269,53 +316,17 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
     let value;
     percentage = ((pos) / (this.maxHandleX || 1));
     value = this.step * Math.round(percentage * (this.max - this.min) / this.step) + this.min;
-    // console.log('getValueFromPosition', pos, percentage, value);
     return Number((value).toFixed(this.toFixed));
   }
 
-  handleDown(e) {
-    console.log('down', e);
-    e.preventDefault();
-    // this.$document.on(this.moveEvent, this.handleMove);
-    // this.$document.on(this.endEvent, this.handleEnd);
-    // If we click on the handle don't set the new position
-    if ((' ' + e.target.className + ' ').replace(/[\n\t]/g, ' ').indexOf(this.handleClass) > -1) {
-      return;
+  isLocalClick(e: HTMLElement) {
+    if (e === null) {
+      return false;
     }
-
-    const posX = this.getRelativePosition(e);
-    console.log(posX);
-    const rangeX = this.$range.nativeElement.getBoundingClientRect().left;
-    console.log(rangeX);
-    const handleX = this.getPositionFromNode(this.$handle.nativeElement) - rangeX;
-    console.log(handleX);
-
-    this.setPosition(posX - this.grabX);
-
-    if (posX >= handleX && posX < handleX + this.handleWidth) {
-      this.grabX = posX - handleX;
+    if (e.id === this.identifier) {
+      return true;
     }
-  }
-
-  handleMove(e) {
-    // console.log('move', e);
-    e.preventDefault();
-    const posX = this.getRelativePosition(e);
-    this.setPosition(posX - this.grabX);
-  }
-
-  handleEnd(e) {
-    // console.log('end', e);
-    e.preventDefault();
-    // this.$document.off(this.moveEvent, this.handleMove);
-    // this.$document.off(this.endEvent, this.handleEnd);
-
-    // Ok we're done fire the change event
-    // this.$element.trigger('change', {origin: this.identifier});
-
-    // if (this.onSlideEnd && typeof this.onSlideEnd === 'function') {
-    //   this.onSlideEnd(this.position, this.value);
-    // }
+    return this.isLocalClick(e.parentElement);
   }
 
   getRelativePosition(e) {
@@ -349,7 +360,7 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    document.removeEventListener('pointerdown', this.handleDown.bind(this));
+    // document.removeEventListener('pointerdown', this.handleDown);
   }
 
 }
