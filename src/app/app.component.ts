@@ -8,22 +8,29 @@ import {Component} from '@angular/core';
 export class AppComponent {
   title = 'ng-rangeslider';
 
-  val1 = 10;
-  val2 = 123;
+  val = 3;
+  min = -10;
+  max = 10;
+  step = 0.1;
+  disabled = false;
 
-  changeVal1(e: Event) {
-    this.val1 = parseInt((e.target as HTMLInputElement).value, 10);
+  cVal(e: Event) {
+    this.val = parseFloat((e.target as HTMLInputElement).value);
   }
 
-  changeVal2(e: Event) {
-    this.val2 = parseInt((e.target as HTMLInputElement).value, 10);
+  cMin(e: Event) {
+    this.min = parseFloat((e.target as HTMLInputElement).value);
   }
 
-  changeRange1(v) {
-    this.val1 = v;
+  cMax(e: Event) {
+    this.max = parseFloat((e.target as HTMLInputElement).value);
   }
 
-  changeRange2(v) {
-    this.val2 = v;
+  cStep(e: Event) {
+    this.step = parseFloat((e.target as HTMLInputElement).value);
+  }
+
+  cDisabled(e: Event) {
+    this.disabled = (e.target as HTMLInputElement).checked;
   }
 }

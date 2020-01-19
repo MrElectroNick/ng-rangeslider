@@ -1,31 +1,43 @@
 <main>
-  <h1>@mrelectronick/ng-rangeslider</h1>
+  <h1 class="text-center mb-16">ng-rangeslider</h1>
+  <p class="text-center">Port to an Angular 8+ from an original JQuery plugin: <a href="https://rangeslider.js.org/">rangeslider.js</a></p>
+  <p class="text-center">This project is on <a href="https://github.com/MrElectroNick/ng-rangeslider" target="_blank">GitHub</a></p>
+  <br>
   <hr>
   <br>
-  <label for="val">Enter value:</label>
+  <label for="val">Value:</label>
   &nbsp;
-  <input id="val" type="number" [value]="val1" (change)="changeVal1($event)" style="width: 75px">
+  <input id="val" type="number" [value]="val" (change)="cVal($event)" style="width: 75px">
+  &nbsp;
+  <label for="min">Min:</label>
+  &nbsp;
+  <input id="min" type="number" [value]="min" (change)="cMin($event)" style="width: 75px">
+  &nbsp;
+  <label for="max">Max:</label>
+  &nbsp;
+  <input id="max" type="number" [value]="max" (change)="cMax($event)" style="width: 75px">
+  &nbsp;
+  <label for="step">Step:</label>
+  &nbsp;
+  <input id="step" type="number" [value]="step" (change)="cStep($event)" style="width: 75px">
+  &nbsp;
+  <label for="disabled">Disabled:</label>
+  &nbsp;
+  <input id="disabled" type="checkbox" (change)="cDisabled($event)" [checked]="disabled">
   <br>
   <br>
 
   <ng-rangeslider
-    [value]="val1"
-    [step]="10"
-    (changed)="changeRange1($event)"></ng-rangeslider>
+    [value]="val"
+    [min]="min"
+    [max]="max"
+    [step]="step"
+    [disabled]="disabled"
+    (changed)="val = $event"></ng-rangeslider>
 
+  <br>
+  <br>
   <hr>
-  <br>
 
-  <label for="val2">Enter value:</label>
-  &nbsp;
-  <input id="val2" type="number" [value]="val2" (change)="changeVal2($event)" style="width: 75px">
-  <br>
-  <br>
-
-  <ng-rangeslider
-    [value]="val2"
-    [min]="100"
-    [max]="200"
-    (changed)="changeRange2($event)"></ng-rangeslider>
 
 </main>
