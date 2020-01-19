@@ -1,14 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewChild} from '@angular/core';
 
-/*
-         (mousedown)="handleDown($event)"
-         (pointerdown)="handleDown($event)"
-         (mousemove)="handleMove($event)"
-         (pointermove)="handleMove($event)"
-         (mouseup)="handleEnd($event)"
-         (pointerup)="handleEnd($event)"
-
- */
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'ng-rangeslider',
@@ -92,7 +83,6 @@ import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewCh
 export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
 
   private static pluginIdentifier = 0;
-  private handleDown;
   private xvalue = 0;
 
   identifier = 'ng-rangeslider-' + (NgRangesliderComponent.pluginIdentifier++);
@@ -135,7 +125,9 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
 
     // tslint:disable-next-line:only-arrow-functions
     const handleMove = function (e) {
-      e.preventDefault();
+      if (e.type !== 'touchmove') {
+        e.preventDefault();
+      }
       const posX = self.getRelativePosition(e);
       self.setPosition(posX - self.grabX);
     };
@@ -143,22 +135,25 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
     // tslint:disable-next-line:only-arrow-functions
     const handleEnd = function (e) {
       e.preventDefault();
-      document.removeEventListener('pointermove', handleMove, true);
-      document.removeEventListener('pointerup', handleEnd, true);
+      document.removeEventListener('mousemove', handleMove, true);
+      document.removeEventListener('touchmove', handleMove, true);
+      document.removeEventListener('mouseup', handleEnd, true);
+      document.removeEventListener('touchend', handleEnd, true);
     };
 
     // tslint:disable-next-line:only-arrow-functions
     const handleDown = function (e) {
-      console.log('down');
       const local = self.isLocalClick(e.target);
       if (self.disabled || !local) {
         return;
       }
-      if (local) {
+      if (local && e.type !== 'touchstart') {
         e.preventDefault();
       }
-      document.addEventListener('pointermove', handleMove, true);
-      document.addEventListener('pointerup', handleEnd, true);
+      document.addEventListener('mousemove', handleMove, true);
+      document.addEventListener('mouseup', handleEnd, true);
+      document.addEventListener('touchmove', handleMove, true);
+      document.addEventListener('touchend', handleEnd, true);
 
       // If we click on the handle don't set the new position
       if ((' ' + e.target.className + ' ').replace(/[\n\t]/g, ' ').indexOf(self.handleClass) > -1) {
@@ -175,10 +170,10 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
         self.grabX = posX - handleX;
       }
     };
-    document.removeEventListener('pointerdown', handleDown);
-    document.addEventListener('pointerdown', handleDown);
-
-    this.handleDown = handleDown;
+    document.removeEventListener('touchstart', handleDown);
+    document.addEventListener('touchstart', handleDown);
+    document.removeEventListener('mousedown', handleDown);
+    document.addEventListener('mousedown', handleDown);
   }
 
   ngAfterViewInit(): void {
@@ -297,18 +292,7 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
     if (value === this.value) {
       return;
     }
-
-    // console.log('setValue', value, this.value);
-    //
-    // console.trace('setValue');
-
     this.changed.emit(value);
-
-    // this.changed.emit(value);
-    // Set the new value and fire the `input` event
-    // this.$element
-    //   .val(value)
-    //   .trigger('input', {origin: this.identifier});
   }
 
   getValueFromPosition(pos) {
@@ -330,19 +314,16 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
   }
 
   getRelativePosition(e) {
-    // console.log('getRelativePosition', this.$range);
-    // return;
     // Get the offset left relative to the viewport
     const rangeX = this.$range.nativeElement.getBoundingClientRect().left;
-    // console.log(rangeX);
     let pageX = 0;
 
     if (typeof e.pageX !== 'undefined') {
       pageX = e.pageX;
-    } else if (typeof e.originalEvent.clientX !== 'undefined') {
-      pageX = e.originalEvent.clientX;
-    } else if (e.originalEvent.touches && e.originalEvent.touches[0] && typeof e.originalEvent.touches[0].clientX !== 'undefined') {
-      pageX = e.originalEvent.touches[0].clientX;
+    } else if (typeof e.clientX !== 'undefined') {
+      pageX = e.clientX;
+    } else if (e.touches && e.touches[0] && typeof e.touches[0].clientX !== 'undefined') {
+      pageX = e.touches[0].clientX;
     } else if (e.currentPoint && typeof e.currentPoint.x !== 'undefined') {
       pageX = e.currentPoint.x;
     }
