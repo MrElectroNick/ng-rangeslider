@@ -170,6 +170,13 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
         self.grabX = posX - handleX;
       }
     };
+
+    // tslint:disable-next-line:only-arrow-functions
+    const winsize = function () {
+      self.update();
+    }
+    window.removeEventListener('resize', winsize);
+    window.addEventListener('resize', winsize);
     document.removeEventListener('touchstart', handleDown);
     document.addEventListener('touchstart', handleDown);
     document.removeEventListener('mousedown', handleDown);
