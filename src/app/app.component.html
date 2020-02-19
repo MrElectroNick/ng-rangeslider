@@ -24,6 +24,10 @@
   <label for="disabled">Disabled:</label>
   &nbsp;
   <input id="disabled" type="checkbox" (change)="cDisabled($event)" [checked]="disabled">
+  &nbsp;
+  <label for="rtl">RTL:</label>
+  &nbsp;
+  <input id="rtl" type="checkbox" (change)="cRtl($event)" [checked]="rtl">
   <br>
   <br>
 
@@ -33,6 +37,7 @@
     [max]="max"
     [step]="step"
     [disabled]="disabled"
+    [rtl]="rtl"
     (changed)="val = $event"></ng-rangeslider>
 
   <br>

@@ -17,7 +17,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewCh
       display: block;
       height: 20px;
       width: 100%;
-      box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
       border-radius: 10px;
     }
 
@@ -86,6 +86,7 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
   private xmin = 0;
   private xstep = 1;
   private xdisabled = false;
+  private xrtl = false;
 
   @Input()
   set value(v: number) {
@@ -105,6 +106,16 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
 
   get disabled() {
     return this.xdisabled;
+  }
+
+  @Input()
+  set rtl(v: boolean) {
+    this.xrtl = v;
+    this.update();
+  }
+
+  get rtl() {
+    return this.xrtl;
   }
 
   @Input()
@@ -158,20 +169,18 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
   @Input() handleClass = 'rangeslider__handle';
 
   constructor() {
-    const self = this;
 
     // tslint:disable-next-line:only-arrow-functions
-    const handleMove = function(e) {
-        if (e.type !== 'touchmove') {
-          e.preventDefault();
-        }
-        const posX = self.getRelativePosition(e);
-        self.setPosition(posX - self.grabX);
+    const handleMove = (e) => {
+      if (e.type !== 'touchmove') {
+        e.preventDefault();
       }
-    ;
+      const posX = this.getRelativePosition(e);
+      this.setPosition(posX - this.grabX);
+    };
 
     // tslint:disable-next-line:only-arrow-functions
-    const handleEnd = function(e) {
+    const handleEnd = (e) => {
       e.preventDefault();
       document.removeEventListener('mousemove', handleMove, true);
       document.removeEventListener('touchmove', handleMove, true);
@@ -180,9 +189,9 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
     };
 
     // tslint:disable-next-line:only-arrow-functions
-    const handleDown = function(e) {
-      const local = self.isLocalClick(e.target);
-      if (self.disabled || !local) {
+    const handleDown = (e) => {
+      const local = this.isLocalClick(e.target);
+      if (this.disabled || !local) {
         return;
       }
       if (local && e.type !== 'touchstart') {
@@ -194,24 +203,24 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
       document.addEventListener('touchend', handleEnd, true);
 
       // If we click on the handle don't set the new position
-      if ((' ' + e.target.className + ' ').replace(/[\n\t]/g, ' ').indexOf(self.handleClass) > -1) {
+      if ((' ' + e.target.className + ' ').replace(/[\n\t]/g, ' ').indexOf(this.handleClass) > -1) {
         return;
       }
 
-      const posX = self.getRelativePosition(e);
-      const rangeX = self.$range.nativeElement.getBoundingClientRect().left;
-      const handleX = self.getPositionFromNode(self.$handle.nativeElement) - rangeX;
+      const posX = this.getRelativePosition(e);
+      const rangeX = this.$range.nativeElement.getBoundingClientRect().left;
+      const handleX = this.getPositionFromNode(this.$handle.nativeElement) - rangeX;
 
-      self.setPosition(posX - self.grabX);
+      this.setPosition(posX - this.grabX);
 
-      if (posX >= handleX && posX < handleX + self.handleWidth) {
-        self.grabX = posX - handleX;
+      if (posX >= handleX && posX < handleX + this.handleWidth) {
+        this.grabX = posX - handleX;
       }
     };
 
     // tslint:disable-next-line:only-arrow-functions
-    const winsize = function() {
-      self.update();
+    const winsize = () => {
+      this.update();
     };
 
     window.removeEventListener('resize', winsize);
@@ -230,11 +239,11 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
    * @param value number
    */
   getPositionFromValue(value: number): number {
-    let percentage;
-    let pos;
-    percentage = (value - this.xmin) / (this.xmax - this.xmin);
-    pos = percentage * this.maxHandleX;
-    return pos;
+    let percentage = (value - this.xmin) / (this.xmax - this.xmin);
+    if (this.rtl) {
+      percentage = 1 - percentage;
+    }
+    return percentage * this.maxHandleX;
   }
 
   update() {
@@ -312,13 +321,23 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
     // Snapping steps
     const value = this.getValueFromPosition(this.cap(pos, 0, this.maxHandleX));
     const left = this.getPositionFromValue(value);
+    // const left = this.cap(pos, 0, this.maxHandleX);
 
     // Update ui
-    this.$fill.nativeElement.style.width = (left + this.grabX) + 'px';
-    this.$handle.nativeElement.style.left = left + 'px';
+    if (this.rtl) {
+      this.$fill.nativeElement.style.right = 0;
+      this.$fill.nativeElement.style.left = '';
+      this.$fill.nativeElement.style.width = (this.rangeWidth - left) + 'px';
+      this.$handle.nativeElement.style.left = left + 'px';
+    } else {
+      this.$fill.nativeElement.style.left = 0;
+      this.$fill.nativeElement.style.right = '';
+      this.$fill.nativeElement.style.width = (left + this.grabX) + 'px';
+      this.$handle.nativeElement.style.left = left + 'px';
+    }
 
     // Update globals
-    this.position = left;
+    this.position = this.rtl ? this.maxHandleX - left : left;
 
     if (updateValue) {
       this.setValue(value);
@@ -346,6 +365,9 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
     let percentage;
     let value;
     percentage = ((pos) / (this.maxHandleX || 1));
+    if (this.rtl) {
+      percentage = 1 - percentage;
+    }
     value = this.step * /*Math.round*/(percentage * (this.xmax - this.xmin) / this.step) + this.xmin;
     return Number((value).toFixed(this.toFixed));
   }

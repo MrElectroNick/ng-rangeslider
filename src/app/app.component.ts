@@ -13,6 +13,7 @@ export class AppComponent {
   max = 10;
   step = 0.1;
   disabled = false;
+  rtl = false;
 
   cVal(e: Event) {
     this.val = parseFloat((e.target as HTMLInputElement).value);
@@ -32,5 +33,9 @@ export class AppComponent {
 
   cDisabled(e: Event) {
     this.disabled = (e.target as HTMLInputElement).checked;
+  }
+
+  cRtl(e: Event) {
+    this.rtl = (e.target as HTMLInputElement).checked;
   }
 }
