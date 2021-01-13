@@ -1,9 +1,9 @@
 {
   "name": "@mrelectronick/ng-rangeslider",
-  "version": "0.0.2",
+  "version": "1.11.0",
   "peerDependencies": {
-    "@angular/common": "^8.2.14",
-    "@angular/core": "^8.2.14"
+    "@angular/common": "^11.0.8",
+    "@angular/core": "^11.0.8"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
