@@ -8,6 +8,9 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "repository" : {
     "type" : "git",
     "url": "git@github.com:MrElectroNick/ng-rangeslider.git"
