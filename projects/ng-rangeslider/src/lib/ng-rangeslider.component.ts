@@ -1,16 +1,20 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, HostBinding, Input, OnDestroy, Output, ViewChild} from '@angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'ng-rangeslider',
   template: `
     <div #range
+         [ngStyle]="{'height':fillSize+'px', 'margin-top':fillMarginTop+'px','border-radius':fillSize/2}"
          [class]="rangeClass" id="{{identifier}}">
-      <div #fill [class]="fillClass"></div>
-      <div #handle [class]="handleClass"></div>
+      <div #fill [class]="fillClass" [ngStyle]="{'height':_fillSize+'px'}"></div>
+      <div #handle [class]="handleClass" [ngStyle]="{width:handleSize+'px',height:handleSize+'px','top':handleTop+'px'}"></div>
     </div>
   `,
   styles: [`
+    :host {
+      display: block;
+    }
     .rangeslider,
     .rangeslider__fill {
       background: #e6e6e6;
@@ -148,6 +152,31 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
     this.update();
   }
 
+  _handleSize = 40;
+  @Input()
+  set handleSize(v: number) {
+    this._handleSize = v;
+    this.update();
+  }
+  get handleSize() {
+    return this._handleSize;
+  }
+
+  _fillSize = 20;
+  @Input()
+  set fillSize(v: number) {
+    this._fillSize = v;
+    this.update();
+  }
+  get fillSize() {
+    return this._fillSize;
+  }
+
+  fillMarginTop = 10;
+  handleTop = -10;
+
+  @HostBinding('style.height') hostHeight = this.handleSize+'px';
+
   identifier = 'ng-rangeslider-' + (NgRangesliderComponent.pluginIdentifier++);
 
   handleWidth = 0;
@@ -253,6 +282,11 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
     this.maxHandleX = this.rangeWidth - this.handleWidth;
     this.grabX = this.handleWidth / 2;
     this.position = this.getPositionFromValue(this.value);
+
+    this.hostHeight = this.handleSize+'px';
+    const margin = (this.handleSize/2) - (this.fillSize/2);
+    this.fillMarginTop = margin;
+    this.handleTop = -margin;
 
     // Consider disabled state
     if (this.disabled) {

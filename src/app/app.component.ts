@@ -12,6 +12,8 @@ export class AppComponent {
   min = -10;
   max = 10;
   step = 0.1;
+  handleSize = 40;
+  fillSize = 20;
   disabled = false;
   rtl = false;
 
@@ -29,6 +31,10 @@ export class AppComponent {
 
   cStep(e: Event) {
     this.step = parseFloat((e.target as HTMLInputElement).value);
+  }
+
+  cHandle(e: Event) {
+    this.handleSize = Number((e.target as HTMLInputElement).value);
   }
 
   cDisabled(e: Event) {

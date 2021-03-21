@@ -2,9 +2,8 @@
   <h1 class="text-center mb-16">ng-rangeslider</h1>
   <p class="text-center">Port to an Angular 8+ from an original JQuery plugin: <a href="https://rangeslider.js.org/">rangeslider.js</a></p>
   <p class="text-center">This project is on <a href="https://github.com/MrElectroNick/ng-rangeslider" target="_blank">GitHub</a></p>
-  <br>
-  <hr>
-  <br>
+
+  <p>
   <label for="val">Value:</label>
   &nbsp;
   <input id="val" type="number" [value]="val" (change)="cVal($event)" style="width: 75px">
@@ -21,6 +20,14 @@
   &nbsp;
   <input id="step" type="number" [value]="step" (change)="cStep($event)" style="width: 75px">
   &nbsp;
+  <label for="handle">Handle size:</label>
+  &nbsp;
+  <input id="handle" type="number" [(ngModel)]="handleSize" style="width: 50px">
+  &nbsp;
+  <label for="fill">Fill size:</label>
+  &nbsp;
+  <input id="fill" type="number" [(ngModel)]="fillSize" style="width: 50px">
+  &nbsp;
   <label for="disabled">Disabled:</label>
   &nbsp;
   <input id="disabled" type="checkbox" (change)="cDisabled($event)" [checked]="disabled">
@@ -28,8 +35,7 @@
   <label for="rtl">RTL:</label>
   &nbsp;
   <input id="rtl" type="checkbox" (change)="cRtl($event)" [checked]="rtl">
-  <br>
-  <br>
+  </p>
 
   <ng-rangeslider
     [value]="val"
@@ -38,6 +44,8 @@
     [step]="step"
     [disabled]="disabled"
     [rtl]="rtl"
+    [handleSize]="handleSize"
+    [fillSize]="fillSize"
     (changed)="val = $event"></ng-rangeslider>
 
   <br>
