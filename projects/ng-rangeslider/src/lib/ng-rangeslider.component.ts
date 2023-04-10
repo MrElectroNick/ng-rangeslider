@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, EventEmitter, HostBinding, Input, OnDestroy, Output, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnDestroy,
+  Output,
+  ViewChild
+} from '@angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -197,7 +207,15 @@ export class NgRangesliderComponent implements AfterViewInit, OnDestroy {
   @Input() fillClass = 'rangeslider__fill';
   @Input() handleClass = 'rangeslider__handle';
 
-  constructor() {
+  constructor(
+    el: ElementRef
+  ) {
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      this.update()
+    })
+
+    resizeObserver.observe(el.nativeElement)
 
     // tslint:disable-next-line:only-arrow-functions
     const handleMove = (e) => {

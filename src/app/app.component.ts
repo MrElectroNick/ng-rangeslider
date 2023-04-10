@@ -16,6 +16,7 @@ export class AppComponent {
   fillSize = 20;
   disabled = false;
   rtl = false;
+  mainWidth = "1000px"
 
   cVal(e: Event) {
     this.val = parseFloat((e.target as HTMLInputElement).value);

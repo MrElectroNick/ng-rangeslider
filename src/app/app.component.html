@@ -1,40 +1,42 @@
-<main>
+<main [ngStyle]="{'max-width':mainWidth}">
   <h1 class="text-center mb-16">ng-rangeslider</h1>
-  <p class="text-center">Port to an Angular 8+ from an original JQuery plugin: <a href="https://rangeslider.js.org/">rangeslider.js</a></p>
-  <p class="text-center">This project is on <a href="https://github.com/MrElectroNick/ng-rangeslider" target="_blank">GitHub</a></p>
+  <p class="text-center">Port to an Angular 8+ from an original JQuery plugin: <a href="https://rangeslider.js.org/">rangeslider.js</a>
+  </p>
+  <p class="text-center">This project is on <a href="https://github.com/MrElectroNick/ng-rangeslider" target="_blank">GitHub</a>
+  </p>
 
   <p>
-  <label for="val">Value:</label>
-  &nbsp;
-  <input id="val" type="number" [value]="val" (change)="cVal($event)" style="width: 75px">
-  &nbsp;
-  <label for="min">Min:</label>
-  &nbsp;
-  <input id="min" type="number" [value]="min" (change)="cMin($event)" style="width: 75px">
-  &nbsp;
-  <label for="max">Max:</label>
-  &nbsp;
-  <input id="max" type="number" [value]="max" (change)="cMax($event)" style="width: 75px">
-  &nbsp;
-  <label for="step">Step:</label>
-  &nbsp;
-  <input id="step" type="number" [value]="step" (change)="cStep($event)" style="width: 75px">
-  &nbsp;
-  <label for="handle">Handle size:</label>
-  &nbsp;
-  <input id="handle" type="number" [(ngModel)]="handleSize" style="width: 50px">
-  &nbsp;
-  <label for="fill">Fill size:</label>
-  &nbsp;
-  <input id="fill" type="number" [(ngModel)]="fillSize" style="width: 50px">
-  &nbsp;
-  <label for="disabled">Disabled:</label>
-  &nbsp;
-  <input id="disabled" type="checkbox" (change)="cDisabled($event)" [checked]="disabled">
-  &nbsp;
-  <label for="rtl">RTL:</label>
-  &nbsp;
-  <input id="rtl" type="checkbox" (change)="cRtl($event)" [checked]="rtl">
+    <label for="val">Value:</label>
+    &nbsp;
+    <input id="val" type="number" [value]="val" (change)="cVal($event)" style="width: 75px">
+    &nbsp;
+    <label for="min">Min:</label>
+    &nbsp;
+    <input id="min" type="number" [value]="min" (change)="cMin($event)" style="width: 75px">
+    &nbsp;
+    <label for="max">Max:</label>
+    &nbsp;
+    <input id="max" type="number" [value]="max" (change)="cMax($event)" style="width: 75px">
+    &nbsp;
+    <label for="step">Step:</label>
+    &nbsp;
+    <input id="step" type="number" [value]="step" (change)="cStep($event)" style="width: 75px">
+    &nbsp;
+    <label for="handle">Handle size:</label>
+    &nbsp;
+    <input id="handle" type="number" [(ngModel)]="handleSize" style="width: 50px">
+    &nbsp;
+    <label for="fill">Fill size:</label>
+    &nbsp;
+    <input id="fill" type="number" [(ngModel)]="fillSize" style="width: 50px">
+    &nbsp;
+    <label for="disabled">Disabled:</label>
+    &nbsp;
+    <input id="disabled" type="checkbox" (change)="cDisabled($event)" [checked]="disabled">
+    &nbsp;
+    <label for="rtl">RTL:</label>
+    &nbsp;
+    <input id="rtl" type="checkbox" (change)="cRtl($event)" [checked]="rtl">
   </p>
 
   <ng-rangeslider
@@ -51,6 +53,11 @@
   <br>
   <br>
   <hr>
-
+  Main width:
+  <select [(ngModel)]="mainWidth">
+    <option [ngValue]="'1000px'">1000px</option>
+    <option [ngValue]="'800px'">800px</option>
+    <option [ngValue]="'600px'">600px</option>
+  </select>
 
 </main>
